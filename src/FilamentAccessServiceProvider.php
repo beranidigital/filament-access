@@ -2,6 +2,8 @@
 
 namespace BeraniDigitalID\FilamentAccess;
 
+use BeraniDigitalID\FilamentAccess\Commands\FilamentAccessCommand;
+use BeraniDigitalID\FilamentAccess\Testing\TestsFilamentAccess;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -13,8 +15,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BeraniDigitalID\FilamentAccess\Commands\FilamentAccessCommand;
-use BeraniDigitalID\FilamentAccess\Testing\TestsFilamentAccess;
 
 class FilamentAccessServiceProvider extends PackageServiceProvider
 {

@@ -101,8 +101,7 @@ class FilamentAccessServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('filament-access', __DIR__ . '/../resources/dist/components/filament-access.js'),
-            Css::make('filament-access-styles', __DIR__ . '/../resources/dist/filament-access.css'),
-            Js::make('filament-access-scripts', __DIR__ . '/../resources/dist/filament-access.js'),
+
         ];
     }
 

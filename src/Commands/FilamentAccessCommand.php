@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace BeraniDigitalID\FilamentAccess\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentAccessCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-access';
 
     public $description = 'My command';
 

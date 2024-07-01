@@ -1,15 +1,15 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace BeraniDigitalID\FilamentAccess;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class SkeletonPlugin implements Plugin
+class FilamentAccessPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'skeleton';
+        return 'filament-access';
     }
 
     public function register(Panel $panel): void

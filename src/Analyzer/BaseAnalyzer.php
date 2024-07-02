@@ -10,6 +10,7 @@ abstract class BaseAnalyzer
     /**
      * @param  class-string  $class
      * @param  array<string, AnalyzerResult>  $results
+     * @throw \Exception
      */
     public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0): AnalyzerResult
     {
@@ -24,19 +25,23 @@ abstract class BaseAnalyzer
 
         // try to get navigation group
         try {
-            if(method_exists($class, 'getNavigationGroup')) {
-                $group =  $class::getNavigationGroup();
-                if($group) $result->tags[]  = $group;
-                
+            if (method_exists($class, 'getNavigationGroup')) {
+                $group = $class::getNavigationGroup();
+                if ($group) {
+                    $result->tags[] = $group;
+                }
+
             }
         } catch (\Exception $exception) {
         }
 
         // try invoke label
         try {
-            if(method_exists($class, 'getNavigationLabel')) {
+            if (method_exists($class, 'getNavigationLabel')) {
                 $label = $class::getNavigationLabel();
-                if($label) $result->label = $label;
+                if ($label) {
+                    $result->label = $label;
+                }
             }
         } catch (\BadMethodCallException $exception) {
         }
@@ -66,7 +71,9 @@ abstract class BaseAnalyzer
         }
         $handler = static::$handlers[$type ?? $class] ?? null;
         if ($handler) {
+            $copiedAdditionalData = $additionalData;
             $handler::analyze($class, $results, $additionalData, $depth + 1);
+            $additionalData = $copiedAdditionalData; // restore additional data as stack unwinds
         } else {
             echo 'No handler for ' . ($type ?? $class) . "\n";
         }

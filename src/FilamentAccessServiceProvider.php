@@ -3,10 +3,10 @@
 namespace BeraniDigitalID\FilamentAccess;
 
 use BeraniDigitalID\FilamentAccess\Commands\FilamentAccessCommand;
+use BeraniDigitalID\FilamentAccess\Commands\GenerateCommand;
 use BeraniDigitalID\FilamentAccess\Testing\TestsFilamentAccess;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
@@ -112,6 +112,7 @@ class FilamentAccessServiceProvider extends PackageServiceProvider
     {
         return [
             FilamentAccessCommand::class,
+            GenerateCommand::class,
         ];
     }
 

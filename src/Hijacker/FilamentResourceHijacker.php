@@ -21,7 +21,7 @@ class FilamentResourceHijacker extends BaseHijacker
 PHP;
 
 
-    public static function hijack(string $sourceCode): string
+    public static function hijack(\PhpParser\Node\Stmt $sourceCode): string
     {
         return $sourceCode;
     }

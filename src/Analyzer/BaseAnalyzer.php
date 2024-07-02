@@ -7,9 +7,14 @@ use Filament\Resources\Resource;
 
 abstract class BaseAnalyzer
 {
+    public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array {
+        return [];
+    }
+
     /**
      * @param  class-string  $class
      * @param  array<string, AnalyzerResult>  $results
+     *
      * @throw \Exception
      */
     public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0): AnalyzerResult
@@ -46,6 +51,7 @@ abstract class BaseAnalyzer
         } catch (\BadMethodCallException $exception) {
         }
 
+        $result->ability = static::processAdditionalPermissions($result);
         return $result;
     }
 

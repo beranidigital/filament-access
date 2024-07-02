@@ -12,6 +12,10 @@ class AnalyzerResult
     public string $class;
 
     public array $tags = [];
+    /**
+     * @var array<string>
+     */
+    public array $ability = [];
     public string $label;
 
     /**

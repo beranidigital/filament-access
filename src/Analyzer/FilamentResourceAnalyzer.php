@@ -7,8 +7,28 @@ use Filament\Resources\Resource;
 
 class FilamentResourceAnalyzer extends BaseAnalyzer
 {
+    public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array
+    {
+        return [
+            'viewAny',
+            'create',
+            'update',
+            'delete',
+            'deleteAny',
+            'forceDelete',
+            'forceDeleteAny',
+            'reorder',
+            'restore',
+            'restoreAny',
+            'view',
+        ];
+    }
+
     /**
      * @param  class-string<resource>  $class
+     *                                         {@inheritDoc}
+     *
+     * @throws \Exception
      */
     public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0): AnalyzerResult
     {

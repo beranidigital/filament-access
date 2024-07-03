@@ -11,7 +11,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
     name: 'filament-access:hijack',
     description: 'Hijack a class to have custom permissions'
 )]
-class HijackCommand extends \Illuminate\Console\Command
+class HijackCommand extends BaseCommand
 {
     public $signature = 'filament-access:hijack {pathToClass}';
 
@@ -19,6 +19,8 @@ class HijackCommand extends \Illuminate\Console\Command
 
     public function handle(): int
     {
+        $res = $this->ensureGit();
+        if($res)return $res;
         $pathToClass = $this->argument('pathToClass');
         if (! file_exists($pathToClass)) {
             $this->error('File not found');

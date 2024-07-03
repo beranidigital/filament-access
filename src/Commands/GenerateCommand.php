@@ -13,7 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
     name: 'filament-access:generate',
     description: 'Generate and hijack all things to have custom permissions'
 )]
-class GenerateCommand extends \Illuminate\Console\Command
+class GenerateCommand extends BaseCommand
 {
     public $signature = 'filament-access:generate';
 
@@ -32,9 +32,15 @@ PHP;
 
     public function handle(): int
     {
+        // ensure git
+        $res = $this->ensureGit();
+        if ($res) {
+            return $res;
+        }
+
         $results = BaseAnalyzer::analyzeAll();
         $enumPath = config('filament-access.enums_path');
-        $classPath = Str::beforeLast($enumPath, '.php');
+        $classPath = config('filament-access.enums_classpath');
         $classPath = Str::replace('/', '\\', $classPath);
         $className = class_basename($classPath);
         $namespace = Str::beforeLast($classPath, '\\' . $className);
@@ -63,6 +69,16 @@ PHP;
         }
         file_put_contents($enumPath, $stringBuilder);
 
+        // json
+        $jsonPath = config('filament-access.json_path');
+        $jsonPath = base_path($jsonPath);
+        // mkdir if not exists
+        $parentDir = dirname($jsonPath);
+        if (! is_dir($parentDir)) {
+            mkdir($parentDir, 0755, true);
+        }
+        file_put_contents($jsonPath, json_encode($results, JSON_PRETTY_PRINT));
+
         return self::SUCCESS;
     }
 
@@ -90,11 +106,10 @@ PHP;
         }
 
         foreach ($targetClazz->stmts as $stmt) {
-            if ($stmt instanceof EnumCase) {
-                if (! in_array($stmt->name->name, $existingEnum)) {
-                    $sourceClazz->stmts[] = $stmt;
-                }
+            if ($stmt instanceof EnumCase && in_array($stmt->name->name, $existingEnum)) {
+                continue;
             }
+            $sourceClazz->stmts[] = $stmt;
         }
 
         $prettyPrinter = new \PhpParser\PrettyPrinter\Standard;

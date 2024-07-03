@@ -2,8 +2,10 @@
 
 namespace BeraniDigitalID\FilamentAccess\Analyzer;
 
+use Filament\Facades\Filament;
 use Filament\PanelProvider;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Log;
 
 abstract class BaseAnalyzer
 {
@@ -110,5 +112,34 @@ abstract class BaseAnalyzer
     public static function getHandlers(): array
     {
         return self::$handlers;
+    }
+
+    public static array $cache = [];
+    /**
+     * To list all panels and resources permissions
+     *
+     * @return array<AnalyzerResult>
+     */
+    public static function analyzeAll(): array
+    {
+        if (count(self::$cache) > 0) {
+            return self::$cache;
+        }
+        $panels = Filament::getPanels();
+        if (count($panels) > 0) {
+            Log::info('Panels found');
+            foreach ($panels as $panel) {
+                Log::info('Panel found: ' . $panel->getId());
+            }
+        } else {
+            Log::warning('No panels found');
+        }
+        $results = [];
+        foreach (app()->getProviders(\Filament\PanelProvider::class) as $panel) {
+            $panel = get_class($panel);
+            $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
+        }
+        self::$cache = $results;
+        return $results;
     }
 }

@@ -7,7 +7,7 @@ use BeraniDigitalID\FilamentAccess\Commands\GenerateCommand;
 
 class FilamentAccess
 {
-    protected \Closure $namingCallback;
+    protected ?\Closure $namingCallback = null;
 
     /**
      * @return array<AnalyzerResult>
@@ -28,7 +28,7 @@ class FilamentAccess
             return ($this->namingCallback)($ability, $arguments);
         }
 
-        return $ability . ':' . ($arguments . '');
+        return ($arguments . '') . '.' . $ability;
     }
     /**
      * @method static \BeraniDigitalID\FilamentAccess\FilamentAccess analyzeAll(): array

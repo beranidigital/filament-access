@@ -5,7 +5,6 @@ namespace BeraniDigitalID\FilamentAccess\Hijacker;
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
@@ -58,5 +57,23 @@ abstract class BaseHijacker
         $newSourceCode = $prettyPrinter->prettyPrintFile($ast);
 
         return $newSourceCode;
+    }
+
+    public static function breadthFirstSearch(array $ast, callable $filter): ?Stmt
+    {
+        $queue = $ast;
+        while ($queue) {
+            $node = array_shift($queue);
+            if ($filter($node)) {
+                return $node;
+            }
+            if (is_array($node)) {
+                $queue = array_merge($queue, $node);
+            } elseif (property_exists($node, 'stmts')) {
+                $queue = array_merge($queue, $node->stmts);
+            }
+        }
+
+        return null;
     }
 }

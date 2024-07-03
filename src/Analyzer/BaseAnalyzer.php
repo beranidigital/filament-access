@@ -7,21 +7,24 @@ use Filament\Resources\Resource;
 
 abstract class BaseAnalyzer
 {
-    public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array {
+    public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array
+    {
         return [];
     }
 
     /**
      * @param  class-string  $class
      * @param  array<string, AnalyzerResult>  $results
+     * @param  array<string, mixed>  $additionalData
+     * @param  class-string|null  $type  Usually parent class
      *
      * @throw \Exception
      */
-    public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0): AnalyzerResult
+    public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0, ?string $type = null): AnalyzerResult
     {
         $classFQN = $class;
         if (! isset($results[$classFQN])) {
-            $result = $results[$classFQN] = new AnalyzerResult($class);
+            $result = $results[$classFQN] = new AnalyzerResult($class, $type ?? $class);
             if (isset($additionalData['tags'])) {
                 $result->tags = $additionalData['tags'];
             }
@@ -52,6 +55,7 @@ abstract class BaseAnalyzer
         }
 
         $result->ability = static::processAdditionalPermissions($result);
+
         return $result;
     }
 
@@ -75,10 +79,26 @@ abstract class BaseAnalyzer
         if ($depth > 10) {
             throw new \Exception('Depth too deep');
         }
+        $type = null; // enforce type to null
+        if (! $type) {
+            // guesswork, recommended
+            $type = class_parents($class)[0] ?? null;
+            // fuzzy match
+            if (! isset(static::$handlers[$type])) {
+                foreach (class_parents($class) as $parent) {
+                    if (isset(static::$handlers[$parent])) {
+                        $type = $parent;
+
+                        // Found :D
+                        break;
+                    }
+                }
+            }
+        }
         $handler = static::$handlers[$type ?? $class] ?? null;
         if ($handler) {
             $copiedAdditionalData = $additionalData;
-            $handler::analyze($class, $results, $additionalData, $depth + 1);
+            $handler::analyze($class, $results, $additionalData, $depth + 1, ($type ?? $class));
             $additionalData = $copiedAdditionalData; // restore additional data as stack unwinds
         } else {
             echo 'No handler for ' . ($type ?? $class) . "\n";

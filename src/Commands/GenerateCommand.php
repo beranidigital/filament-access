@@ -4,6 +4,8 @@ namespace BeraniDigitalID\FilamentAccess\Commands;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use BeraniDigitalID\FilamentAccess\Analyzer\BaseAnalyzer;
+use BeraniDigitalID\FilamentAccess\Task\GenerateTask;
+use BeraniDigitalID\FilamentAccess\Task\GenerateTaskThreaded;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -20,19 +22,16 @@ class GenerateCommand extends \Illuminate\Console\Command
 
     public $description = 'Generate and hijack all things to have fine grained custom permissions';
 
-
-
     /**
-     * @param class-string<Resource> $resourceClass
+     * @param  class-string<resource>  $resourceClass
      */
-    public static function resourceExplorer(string $resourceClass) {
-
-    }
+    public static function resourceExplorer(string $resourceClass) {}
 
     public static function panelExplorer(Panel $panel): array {}
 
     /**
      * To list all panels and resources permissions
+     *
      * @return array<AnalyzerResult>
      */
     public static function analyzeAll(): array
@@ -42,6 +41,7 @@ class GenerateCommand extends \Illuminate\Console\Command
             $panel = get_class($panel);
             $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
         }
+
         return $results;
     }
 
@@ -58,6 +58,32 @@ class GenerateCommand extends \Illuminate\Console\Command
         }
 
         $results = self::analyzeAll();
+        $tasks = [];
+        foreach ($results as $result) {
+            $tasks[] = new GenerateTask($result);
+        }
+
+        $results = [];
+        if (! extension_loaded('pthreads')) {
+            $this->warn('pthreads extension not loaded, please install it to speed up the process');
+            foreach ($tasks as $task) {
+                $task->run();
+                $results[] = $task->getResult();
+            }
+        } else {
+            $worker = new \Worker();
+            $worker->start();
+            $threadedTasks = [];
+            foreach ($tasks as $task) {
+                $worker->stack($threadedTasks[] = new GenerateTaskThreaded($task));
+            }
+
+            $worker->shutdown();
+            foreach ($threadedTasks as $threadedTask) {
+                $results[] = $threadedTask->getResult();
+            }
+        }
+
 
         return self::SUCCESS;
     }

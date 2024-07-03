@@ -25,14 +25,18 @@ class FilamentResourceAnalyzer extends BaseAnalyzer
     }
 
     /**
-     * @param  class-string<resource>  $class
      *                                         {@inheritDoc}
      *
+     * @param string $class
+     * @param array &$results
+     * @param array &$additionalData
+     * @param int $depth
+     * @param string|null $type
      * @throws \Exception
      */
-    public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0): AnalyzerResult
+    public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0, ?string $type = null): AnalyzerResult
     {
-        $result = parent::analyze($class, $results, $additionalData, $depth);
+        $result = parent::analyze($class, $results, $additionalData, $depth, $type);
         $additionalData['tags'] = $result->tags;
         $result->tags[] = $result->label;
 

@@ -2,27 +2,53 @@
 
 namespace BeraniDigitalID\FilamentAccess\Hijacker;
 
+use PhpParser\Node\Stmt;
+
 class FilamentResourceHijacker extends BaseHijacker
 {
     public static string $templateCode = <<<'PHP'
-    public static function getModel(): string
+<?php
+class  FilamentResourceHijacker {
+    public static function can(string $action, ?Model $record = null): bool
     {
-        // if class name is ModelResource, return the class name
-        $modelName = null;
-        if(property_exists(static::class, 'model')) {
-            $modelName = static::model;
+        if (static::shouldSkipAuthorization()) {
+            return true;
         }
-        $expectedClassName = $modelName . 'Resource';
-        if (static::class === $expectedClassName) {
-            return $modelName;
+
+        $model = self::class;
+
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
         }
-        return self::class;
-    }
+
+   }
+}
 PHP;
 
-
-    public static function hijack(\PhpParser\Node\Stmt $sourceCode): string
+    public static function hijack(Stmt\Class_ $sourceCode)
     {
-        return $sourceCode;
+        // find if `can` method already exists
+        $hasCanMethod = false;
+        foreach ($sourceCode->stmts as $stmt) {
+            if ($stmt instanceof Stmt\ClassMethod) {
+                if ($stmt->name->name === 'can') {
+                    $hasCanMethod = true;
+
+                    break;
+                }
+            }
+        }
+        if ($hasCanMethod) {
+            return;
+        }
+        // add `can` method
+        $statements = self::getParser()->parse(self::$templateCode);
+        if (! is_array($statements)) {
+            throw new \Exception('Failed to parse template code');
+        }
+        $sourceCode->stmts[] = $statements[0]->stmts[0];
+
     }
 }

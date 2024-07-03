@@ -2,45 +2,58 @@
 
 namespace BeraniDigitalID\FilamentAccess\Hijacker;
 
+use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use PhpParser\Node\Stmt;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
 abstract class BaseHijacker
 {
-    abstract public static function hijack(Stmt $sourceCode): string;
+    abstract public static function hijack(Stmt\Class_ $sourceCode);
 
+    /**
+     * @var array<class-string, class-string>
+     */
     public static array $handlers = [
         'Filament\Resources\Resource' => FilamentResourceHijacker::class,
     ];
 
     protected static ?Parser $parser = null;
 
-    public static function handleSourceCode(string $sourceCode): string
+    public static function getParser(): Parser
     {
         if (! self::$parser) {
             self::$parser = (new ParserFactory())->createForHostVersion();
         }
 
-        $ast = self::$parser->parse($sourceCode);
-        if (! $ast) {
-            throw new \Exception('Source code has no AST');
-        }
-        $className = null;
-        foreach ($ast as $node) {
-            if ($node instanceof \PhpParser\Node\Stmt\Class_) {
-                $className = $node->name->name;
+        return self::$parser;
+    }
 
-                break;
-            }
+    public static function handleSourceCode(AnalyzerResult $arg): ?string
+    {
+        $parser = self::getParser();
+        $sourceCode = file_get_contents($arg->file);
+
+        $ast = $parser->parse($sourceCode);
+        if (! $ast) {
+            throw new \Exception('Source code has no AST: ' . $sourceCode);
         }
-        if (! $className) {
-            throw new \Exception('Source code has no class');
+        $dumper = new \PhpParser\NodeDumper();
+        $hashBefore = hash('sha256', $dumper->dump($ast));
+
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new HijackerVisitor($arg));
+        $ast = $traverser->traverse($ast);
+
+        $hashAfter = hash('sha256', $dumper->dump($ast));
+        if ($hashBefore === $hashAfter) {
+            return null;
         }
-        if (array_key_exists($className, self::$handlers)) {
-            return self::$handlers[$className]::hijack($sourceCode);
-        } else {
-            return $sourceCode;
-        }
+        $prettyPrinter = new \PhpParser\PrettyPrinter\Standard;
+        $newSourceCode = $prettyPrinter->prettyPrintFile($ast);
+
+        return $newSourceCode;
     }
 }

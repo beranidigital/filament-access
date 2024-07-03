@@ -18,6 +18,9 @@ abstract class BaseHijacker
      */
     public static array $handlers = [
         'Filament\Resources\Resource' => FilamentResourceHijacker::class,
+        'Filament\PanelProvider' => FilamentPanelProviderHijacker::class,
+        'Filament\Widgets\Widget' => FilamentWidgetHijacker::class,
+        'Filament\Pages\Page' => FilamentPageHijacker::class,
     ];
 
     protected static ?Parser $parser = null;

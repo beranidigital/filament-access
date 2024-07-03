@@ -4,9 +4,9 @@ namespace BeraniDigitalID\FilamentAccess\Task;
 
 if (extension_loaded('pthreads')) {
 
-    class GenerateTaskThreaded extends \Threaded
+    class HijackTaskThreaded extends \Threaded
     {
-        public function __construct(private readonly GenerateTask $task) {}
+        public function __construct(private readonly HijackTask $task) {}
 
         public function run(): void
         {

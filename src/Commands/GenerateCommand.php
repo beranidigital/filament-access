@@ -4,8 +4,8 @@ namespace BeraniDigitalID\FilamentAccess\Commands;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use BeraniDigitalID\FilamentAccess\Analyzer\BaseAnalyzer;
-use BeraniDigitalID\FilamentAccess\Task\GenerateTask;
-use BeraniDigitalID\FilamentAccess\Task\GenerateTaskThreaded;
+use BeraniDigitalID\FilamentAccess\Task\HijackTask;
+use BeraniDigitalID\FilamentAccess\Task\HijackTaskThreaded;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -29,6 +29,7 @@ class GenerateCommand extends \Illuminate\Console\Command
 
     public static function panelExplorer(Panel $panel): array {}
 
+    public static $cache = [];
     /**
      * To list all panels and resources permissions
      *
@@ -36,12 +37,15 @@ class GenerateCommand extends \Illuminate\Console\Command
      */
     public static function analyzeAll(): array
     {
+        if (count(self::$cache) > 0) {
+            return self::$cache;
+        }
         $results = [];
-        foreach (array_values(app()->getProviders(\Filament\PanelProvider::class)) as $panel) {
+        foreach (app()->getProviders(\Filament\PanelProvider::class) as $panel) {
             $panel = get_class($panel);
             $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
         }
-
+        self::$cache = $results;
         return $results;
     }
 
@@ -64,7 +68,7 @@ class GenerateCommand extends \Illuminate\Console\Command
             if (! str_starts_with($result->class, 'App\\')) {
                 continue;
             }
-            $tasks[] = new GenerateTask($result);
+            $tasks[] = new HijackTask($result);
         }
 
         $results = [];
@@ -79,7 +83,7 @@ class GenerateCommand extends \Illuminate\Console\Command
             $worker->start();
             $threadedTasks = [];
             foreach ($tasks as $task) {
-                $worker->stack($threadedTasks[] = new GenerateTaskThreaded($task));
+                $worker->stack($threadedTasks[] = new HijackTaskThreaded($task));
             }
 
             $worker->shutdown();

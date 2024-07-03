@@ -4,7 +4,7 @@ namespace BeraniDigitalID\FilamentAccess\Task;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 
-class GenerateTask
+class HijackTask
 {
     private $result;
 

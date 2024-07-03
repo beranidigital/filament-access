@@ -16,7 +16,6 @@ class  FilamentPageHijacker {
 }
 PHP;
 
-
     public static function hijack(Stmt\Class_ $sourceCode): void
     {
         // find if `canAccess` method already exists

@@ -115,6 +115,7 @@ abstract class BaseAnalyzer
     }
 
     public static array $cache = [];
+
     /**
      * To list all panels and resources permissions
      *
@@ -140,6 +141,7 @@ abstract class BaseAnalyzer
             $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
         }
         self::$cache = $results;
+
         return $results;
     }
 }

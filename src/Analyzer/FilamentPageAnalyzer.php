@@ -9,7 +9,7 @@ class FilamentPageAnalyzer extends BaseAnalyzer
     public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array
     {
         return [
-            'access'
+            'access',
         ];
     }
 }

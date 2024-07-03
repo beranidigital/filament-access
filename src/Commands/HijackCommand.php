@@ -20,7 +20,9 @@ class HijackCommand extends BaseCommand
     public function handle(): int
     {
         $res = $this->ensureGit();
-        if($res)return $res;
+        if ($res) {
+            return $res;
+        }
         $pathToClass = $this->argument('pathToClass');
         if (! file_exists($pathToClass)) {
             $this->error('File not found');
@@ -57,7 +59,6 @@ class HijackCommand extends BaseCommand
                 $results[] = $threadedTask->getResult();
             }
         }
-
 
         return self::SUCCESS;
     }

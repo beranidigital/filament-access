@@ -4,7 +4,6 @@ namespace BeraniDigitalID\FilamentAccess;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Illuminate\Support\Facades\Log;
 
 class FilamentAccessPlugin implements Plugin
 {

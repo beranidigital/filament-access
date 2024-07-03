@@ -13,11 +13,6 @@ class FilamentPanelProviderAnalyzer extends BaseAnalyzer
 
     /**
      *                                      {@inheritDoc}
-     * @param string $class
-     * @param array &$results
-     * @param array &$additionalData
-     * @param int $depth
-     * @param string|null $type
      */
     public static function analyze(string $class, array &$results, array &$additionalData = [], int $depth = 0, ?string $type = null): AnalyzerResult
     {

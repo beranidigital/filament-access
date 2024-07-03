@@ -60,6 +60,10 @@ class GenerateCommand extends \Illuminate\Console\Command
         $results = self::analyzeAll();
         $tasks = [];
         foreach ($results as $result) {
+            // skip result that not in App namespace
+            if (! str_starts_with($result->class, 'App\\')) {
+                continue;
+            }
             $tasks[] = new GenerateTask($result);
         }
 

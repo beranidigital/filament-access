@@ -2,6 +2,8 @@
 
 namespace BeraniDigitalID\FilamentAccess\Analyzer;
 
+use BeraniDigitalID\FilamentAccess\Facades\FilamentAccess;
+
 class AnalyzerResult
 {
     public string $file;
@@ -27,5 +29,17 @@ class AnalyzerResult
         $reflection = new \ReflectionClass($class);
         $this->file = $reflection->getFileName();
         $this->label = $class;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function permissions(): array
+    {
+        $permissions = [];
+        foreach ($this->ability as $ability) {
+            $permissions[] = FilamentAccess::determinePermissionName($ability, $this->class);
+        }
+        return $permissions;
     }
 }

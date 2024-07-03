@@ -2,6 +2,7 @@
 
 namespace BeraniDigitalID\FilamentAccess\Commands;
 
+use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use BeraniDigitalID\FilamentAccess\Analyzer\BaseAnalyzer;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -30,6 +31,20 @@ class GenerateCommand extends \Illuminate\Console\Command
 
     public static function panelExplorer(Panel $panel): array {}
 
+    /**
+     * To list all panels and resources permissions
+     * @return array<AnalyzerResult>
+     */
+    public static function analyzeAll(): array
+    {
+        $results = [];
+        foreach (array_values(app()->getProviders(\Filament\PanelProvider::class)) as $panel) {
+            $panel = get_class($panel);
+            $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
+        }
+        return $results;
+    }
+
     public function handle(): int
     {
         $panels = Filament::getPanels();
@@ -42,12 +57,7 @@ class GenerateCommand extends \Illuminate\Console\Command
             $this->info('No panels found');
         }
 
-        $results = [];
-        foreach (array_values(app()->getProviders(\Filament\PanelProvider::class)) as $panel) {
-            $panel = get_class($panel);
-            $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
-        }
-
+        $results = self::analyzeAll();
 
         return self::SUCCESS;
     }

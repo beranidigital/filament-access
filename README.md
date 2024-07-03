@@ -7,7 +7,19 @@
 
 
 
-Multi-panel aware fine grained permissions for Laravel Filament with multithreading to analyze, generate and inject into all classes and methods in the application.
+Multi-panel aware fine-grained permissions for Laravel Filament to analyze, generate and inject into all classes and methods in the application.
+
+## What this package does
+- Generate list of almost all Filament component permissions
+- Automatically redefine classes to avoid conflict
+
+## Why I need this package
+- You have too many classes and methods to define permissions one by one
+- Default Filament authorization doesn't support multi-panel
+
+## What this package doesn't do
+- It doesn't provide complete solution for authorization
+- It's not meant for custom defined permissions, you need to define it yourself
 
 ## Installation
 
@@ -17,12 +29,7 @@ You can install the package via composer:
 composer require beranidigital/filament-access
 ```
 
-You can publish and run the migrations with:
 
-```bash
-php artisan vendor:publish --tag="filament-access-migrations"
-php artisan migrate
-```
 
 You can publish the config file with:
 
@@ -30,30 +37,25 @@ You can publish the config file with:
 php artisan vendor:publish --tag="filament-access-config"
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="filament-access-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
 
 ## Usage
 
 ```php
-$filamentAccess = new BeraniDigitalID\FilamentAccess();
-echo $filamentAccess->echoPhrase('Hello, BeraniDigitalID!');
+\BeraniDigitalID\FilamentAccess\Facades\FilamentAccess::analyzeAll();
 ```
 
-## Testing
-
-```bash
-composer test
+## How it works
+1. It hooks into a class to correct the permission
+2. The class will call `Gate::authorize('viewAny', $correctArgument)` with an example of `App\Filament\Resources\MyResource` as the argument
+3. It's up to you to authorize it with your own custom logic
+```php
+\Illuminate\Support\Facades\Gate::before(function ($user, $ability, $arguments) {
+    $permission = \BeraniDigitalID\FilamentAccess\Facades\FilamentAccess::determinePermission($ability, $arguments);
+    if (!$user->hasPermissionTo($permission)) {
+        return false;
+    }
+    // continue to the next authorization logic
+});
 ```
 
 ## Changelog

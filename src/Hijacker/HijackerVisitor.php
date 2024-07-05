@@ -25,6 +25,7 @@ class HijackerVisitor extends NodeVisitorAbstract
                 }
             }
         }
+
         return null;
     }
 }

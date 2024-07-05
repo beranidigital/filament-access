@@ -11,7 +11,7 @@ class HijackerVisitor extends NodeVisitorAbstract
 {
     public function __construct(private readonly AnalyzerResult $arg) {}
 
-    public function enterNode(Node $node): void
+    public function enterNode(Node $node)
     {
 
         if ($node instanceof Node\Stmt\Class_) {
@@ -25,5 +25,6 @@ class HijackerVisitor extends NodeVisitorAbstract
                 }
             }
         }
+        return null;
     }
 }

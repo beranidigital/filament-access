@@ -3,8 +3,6 @@
 namespace BeraniDigitalID\FilamentAccess\Hijacker;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
-use Filament\Resources\RelationManagers\RelationManager;
-use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;

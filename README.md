@@ -7,7 +7,7 @@
 
 
 
-Multi-panel aware fine-grained permissions for Laravel Filament to analyze, generate and inject into all classes and methods in the application.
+Multi-panel aware ultra-fine-grained permissions for Laravel Filament to analyze, generate and inject into all classes and methods in the application.
 
 ## What this package does
 - Generate list of almost all Filament component permissions

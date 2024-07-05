@@ -2,17 +2,19 @@
 
 namespace BeraniDigitalID\FilamentAccess\Analyzer;
 
+use BeraniDigitalID\FilamentAccess\Hijacker\BaseHijacker;
 use Filament\Facades\Filament;
 use Filament\PanelProvider;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 abstract class BaseAnalyzer
 {
     public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array
     {
-        return [];
+        return self::giveListOfStaticMethodCanFromGivenClass($analyzerResult->class);
     }
 
     /**
@@ -71,7 +73,28 @@ abstract class BaseAnalyzer
         Resource::class => FilamentResourceAnalyzer::class,
         PanelProvider::class => FilamentPanelProviderAnalyzer::class,
         RelationManager::class => FilamentRelationManagerAnalyzer::class,
+        Model::class => FilamentModelAnalyzer::class,
     ];
+
+    public static function giveListOfStaticMethodCanFromGivenClass(string $class): array
+    {
+        $parser = BaseHijacker::getParser();
+        $staticMethodVisitor = new StaticMethodCanVisitor;
+        $stmts = $parser->parse(file_get_contents((new \ReflectionClass($class))->getFileName()));
+        $traverser = new \PhpParser\NodeTraverser;
+        $traverser->addVisitor($staticMethodVisitor);
+        $traverser->traverse($stmts);
+
+        $cans = [];
+        foreach ($staticMethodVisitor->canMethods as $method) {
+            $name = $method->name->name;
+            // remove can
+            $name = substr($name, 3);
+            $cans[] = $name;
+        }
+
+        return $cans;
+    }
 
     /**
      * @param  class-string  $class
@@ -86,7 +109,7 @@ abstract class BaseAnalyzer
         $type = null; // enforce type to null
         if (! $type) {
             // guesswork, recommended
-            $type = class_parents($class)[0] ?? null;
+            $type = array_values(class_parents($class))[0] ?? null;
             // fuzzy match
             if (! isset(static::$handlers[$type])) {
                 foreach (class_parents($class) as $parent) {
@@ -118,6 +141,31 @@ abstract class BaseAnalyzer
 
     public static array $cache = [];
 
+    public static function traverseAndGetClass(string $path): array
+    {
+        $queue = scandir($path);
+        $results = [];
+        while ($queue && count($queue) > 0) {
+            $file = array_shift($queue);
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            $fullPath = $path . '/' . $file;
+            if (is_dir($fullPath)) {
+                $queue = array_merge($queue, scandir($fullPath));
+            } else {
+                $relativePath = str_replace($path, '', $fullPath);
+                $relativePath = ltrim($relativePath, '/');
+                if(str_ends_with($relativePath, '.php')){
+                    $relativePath = str_replace('.php', '', $relativePath);
+                    $results[] = $relativePath;
+                }
+            }
+        }
+        return $results;
+
+    }
+
     /**
      * To list all panels and resources permissions
      *
@@ -141,6 +189,11 @@ abstract class BaseAnalyzer
         foreach (app()->getProviders(\Filament\PanelProvider::class) as $panel) {
             $panel = get_class($panel);
             $results = BaseAnalyzer::startAnalyze($panel, $results, type: PanelProvider::class);
+        }
+        $models = self::traverseAndGetClass(app_path('Models'));
+        foreach ($models as $model) {
+            $model = 'App\\Models\\' . $model;
+            $results = BaseAnalyzer::startAnalyze($model, $results, type: Model::class);
         }
         self::$cache = $results;
 

@@ -15,10 +15,10 @@ class  FilamentResourceHijacker {
             return true;
         }
 
-        $model = self::class;
+        $model = static::class;
 
         try {
-            return self::authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+            return \Filament\authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
         } catch (\Illuminate\Auth\Access\AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
@@ -41,7 +41,17 @@ PHP;
             }
         }
         if ($hasCanMethod) {
-            return;
+            //???
+            // remove existing `can` method
+            foreach ($sourceCode->stmts as $key => $stmt) {
+                if ($stmt instanceof Stmt\ClassMethod) {
+                    if ($stmt->name->name === 'can') {
+                        unset($sourceCode->stmts[$key]);
+
+                        break;
+                    }
+                }
+            }
         }
         // add `can` method
         $statements = self::getParser()->parse(static::$templateCode);

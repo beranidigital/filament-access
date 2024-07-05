@@ -11,7 +11,7 @@ class FilamentWidgetHijacker extends BaseHijacker
 class  FilamentPanelProviderHijacker {
     public static function canView(): bool
     {
-        return \Illuminate\Support\Facades\Gate::allows('view', self::class);
+        return \Illuminate\Support\Facades\Gate::allows('view', static::class);
     }
 }
 PHP;

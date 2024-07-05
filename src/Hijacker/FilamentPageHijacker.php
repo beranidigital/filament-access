@@ -11,7 +11,7 @@ class FilamentPageHijacker extends BaseHijacker
 class  FilamentPageHijacker {
     public static function canAccess(): bool
     {
-        return \Illuminate\Support\Facades\Gate::allows('access', self::class);
+        return \Illuminate\Support\Facades\Gate::allows('access', static::class);
     }
 }
 PHP;

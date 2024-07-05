@@ -55,7 +55,7 @@ php artisan filament-access:hijack
 3. It's up to you to authorize it with your own custom logic
 ```php
 \Illuminate\Support\Facades\Gate::before(function ($user, $ability, $arguments) {
-    $permission = \BeraniDigitalID\FilamentAccess\Facades\FilamentAccess::determinePermission($ability, $arguments);
+    $permission = \BeraniDigitalID\FilamentAccess\Facades\FilamentAccess::determinePermissionName($ability, $arguments);
     if (!$user->hasPermissionTo($permission)) {
         return false;
     }

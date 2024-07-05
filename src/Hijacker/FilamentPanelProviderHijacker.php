@@ -6,5 +6,5 @@ use PhpParser\Node\Stmt;
 
 class FilamentPanelProviderHijacker extends BaseHijacker
 {
-    public static function hijack(Stmt\Class_ $sourceCode) {}
+    public static function hijack(Stmt\Class_ $sourceCode, \BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult $arg) {}
 }

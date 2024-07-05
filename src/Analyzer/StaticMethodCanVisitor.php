@@ -12,7 +12,7 @@ class StaticMethodCanVisitor extends NodeVisitorAbstract
     public function enterNode(\PhpParser\Node $node)
     {
         if ($node instanceof \PhpParser\Node\Stmt\ClassMethod) {
-            if ($node->isStatic() && Str::startsWith($node->name->name, 'can')) {
+            if (Str::startsWith($node->name->name, 'can')) {
                 $this->canMethods[] = $node;
             }
         }

@@ -3,6 +3,7 @@
 namespace BeraniDigitalID\FilamentAccess\Hijacker;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
+use Filament\Resources\RelationManagers\RelationManager;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -10,7 +11,7 @@ use PhpParser\ParserFactory;
 
 abstract class BaseHijacker
 {
-    abstract public static function hijack(Stmt\Class_ $sourceCode);
+    abstract public static function hijack(Stmt\Class_ $sourceCode, AnalyzerResult $arg);
 
     /**
      * @var array<class-string, class-string>
@@ -20,6 +21,7 @@ abstract class BaseHijacker
         'Filament\PanelProvider' => FilamentPanelProviderHijacker::class,
         'Filament\Widgets\Widget' => FilamentWidgetHijacker::class,
         'Filament\Pages\Page' => FilamentPageHijacker::class,
+        RelationManager::class => FilamentRelationManagerHijacker::class,
     ];
 
     protected static ?Parser $parser = null;

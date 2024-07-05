@@ -14,7 +14,7 @@ abstract class BaseAnalyzer
 {
     public static function processAdditionalPermissions(AnalyzerResult $analyzerResult): array
     {
-        return self::giveListOfStaticMethodCanFromGivenClass($analyzerResult->class);
+        return self::giveListOfStaticMethodCanFromGivenClass($analyzerResult->type);
     }
 
     /**
@@ -90,6 +90,9 @@ abstract class BaseAnalyzer
             $name = $method->name->name;
             // remove can
             $name = substr($name, 3);
+            if(empty($name))continue;
+            // lower first letter
+            $name = lcfirst($name);
             $cans[] = $name;
         }
 

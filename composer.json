@@ -1,6 +1,6 @@
 {
     "name": "beranidigital/filament-access",
-    "description": "This is my package filament-access",
+    "description": "Multi-panel aware fine-grained permissions for Laravel Filament to analyze, generate and inject into all classes and methods in the application.\n or whatever that means.",
     "keywords": [
         "beranidigital",
         "laravel",

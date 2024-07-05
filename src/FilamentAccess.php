@@ -3,6 +3,7 @@
 namespace BeraniDigitalID\FilamentAccess;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
+use BeraniDigitalID\FilamentAccess\Analyzer\BaseAnalyzer;
 use BeraniDigitalID\FilamentAccess\Commands\GenerateCommand;
 
 class FilamentAccess
@@ -14,7 +15,7 @@ class FilamentAccess
      */
     public function analyzeAll(): array
     {
-        return GenerateCommand::analyzeAll();
+        return BaseAnalyzer::analyzeAll();
     }
 
     public function setNamingCallback(\Closure $namingCallback): void

@@ -2,8 +2,8 @@
 
 namespace BeraniDigitalID\FilamentAccess;
 
-use BeraniDigitalID\FilamentAccess\Commands\FilamentAccessCommand;
 use BeraniDigitalID\FilamentAccess\Commands\GenerateCommand;
+use BeraniDigitalID\FilamentAccess\Commands\HijackCommand;
 use BeraniDigitalID\FilamentAccess\Testing\TestsFilamentAccess;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
@@ -111,8 +111,8 @@ class FilamentAccessServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            FilamentAccessCommand::class,
             GenerateCommand::class,
+            HijackCommand::class,
         ];
     }
 

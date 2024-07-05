@@ -4,7 +4,6 @@ namespace BeraniDigitalID\FilamentAccess;
 
 use BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult;
 use BeraniDigitalID\FilamentAccess\Analyzer\BaseAnalyzer;
-use BeraniDigitalID\FilamentAccess\Commands\GenerateCommand;
 
 class FilamentAccess
 {

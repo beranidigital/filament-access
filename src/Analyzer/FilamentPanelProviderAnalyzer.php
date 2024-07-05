@@ -20,10 +20,9 @@ class FilamentPanelProviderAnalyzer extends BaseAnalyzer
         $additionalInfo = [];
 
         $panelProvider = app()->getProvider($class);
-        if(! $panelProvider) {
-            throw new \Exception("PanelProvider not found: ".basename($class));
+        if (! $panelProvider) {
+            throw new \Exception('PanelProvider not found: ' . basename($class));
         }
-
 
         $panel = $panelProvider->panel(\Filament\Panel::make());
         $parentResult->tags[] = $panel->getId();

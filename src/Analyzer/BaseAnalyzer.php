@@ -90,7 +90,9 @@ abstract class BaseAnalyzer
             $name = $method->name->name;
             // remove can
             $name = substr($name, 3);
-            if(empty($name))continue;
+            if (empty($name)) {
+                continue;
+            }
             // lower first letter
             $name = lcfirst($name);
             $cans[] = $name;
@@ -159,12 +161,13 @@ abstract class BaseAnalyzer
             } else {
                 $relativePath = str_replace($path, '', $fullPath);
                 $relativePath = ltrim($relativePath, '/');
-                if(str_ends_with($relativePath, '.php')){
+                if (str_ends_with($relativePath, '.php')) {
                     $relativePath = str_replace('.php', '', $relativePath);
                     $results[] = $relativePath;
                 }
             }
         }
+
         return $results;
 
     }

@@ -2,22 +2,17 @@
 
 namespace BeraniDigitalID\FilamentAccess\Hijacker;
 
-use Illuminate\Support\Str;
-use PhpParser\Node\Stmt;
-
-class FilamentRelationManagerHijacker extends BaseHijacker
+// basically the same method to hijack
+class FilamentRelationManagerHijacker extends FilamentResourceHijacker
 {
-
-    public static function hijack(Stmt\Class_ $sourceCode, \BeraniDigitalID\FilamentAccess\Analyzer\AnalyzerResult $arg)
+    public static string $templateCode = <<<'PHP'
+<?php
+class  FilamentRelationManagerHijacker {
+    public function can(string $action, ?\Illuminate\Database\Eloquent\Model $record = null): bool
     {
-
-        foreach ($sourceCode->stmts as $stmt) {
-            if ($stmt instanceof Stmt\ClassMethod) {
-                if (Str::startsWith($stmt->name->name, 'can')) {
-
-                }
-            }
-        }
-
+        return parent::can($action, $record ?? static::class);
     }
+}
+
+PHP;
 }

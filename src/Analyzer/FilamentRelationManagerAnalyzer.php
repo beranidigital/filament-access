@@ -2,6 +2,4 @@
 
 namespace BeraniDigitalID\FilamentAccess\Analyzer;
 
-class FilamentRelationManagerAnalyzer extends BaseAnalyzer {
-  
-}
+class FilamentRelationManagerAnalyzer extends BaseAnalyzer {}

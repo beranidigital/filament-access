@@ -19,7 +19,7 @@ class HijackerVisitor extends NodeVisitorAbstract
             if (class_basename($this->arg->class) === $node->name->name) {
                 $handler = BaseHijacker::$handlers[$this->arg->type] ?? null;
                 if ($handler) {
-                    $handler::hijack($node, $arg);
+                    $handler::hijack($node, $this->arg);
                 } else {
                     Log::warning('No handler for ' . $this->arg->type);
                 }

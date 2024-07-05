@@ -44,7 +44,7 @@ PHP;
             return;
         }
         // add `can` method
-        $statements = self::getParser()->parse(self::$templateCode);
+        $statements = self::getParser()->parse(static::$templateCode);
         if (! is_array($statements)) {
             throw new \Exception('Failed to parse template code');
         }

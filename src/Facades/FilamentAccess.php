@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \BeraniDigitalID\FilamentAccess\FilamentAccess
  *
- * @method static \BeraniDigitalID\FilamentAccess\FilamentAccess analyzeAll(): array
- * @method static \BeraniDigitalID\FilamentAccess\FilamentAccess setNamingCallback(\Closure $namingCallback): void
- * @method static \BeraniDigitalID\FilamentAccess\FilamentAccess determinePermissionName(string $ability, mixed $arguments): ?string
+ * @method static array analyzeAll
+ * @method static void setNamingCallback(\Closure $namingCallback)
+ * @method static string|null determinePermissionName(string $ability, mixed $arguments)
  */
 class FilamentAccess extends Facade
 {

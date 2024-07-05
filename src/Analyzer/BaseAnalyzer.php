@@ -4,6 +4,7 @@ namespace BeraniDigitalID\FilamentAccess\Analyzer;
 
 use Filament\Facades\Filament;
 use Filament\PanelProvider;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Log;
 
@@ -69,6 +70,7 @@ abstract class BaseAnalyzer
         \Filament\Pages\Page::class => FilamentPageAnalyzer::class,
         Resource::class => FilamentResourceAnalyzer::class,
         PanelProvider::class => FilamentPanelProviderAnalyzer::class,
+        RelationManager::class => FilamentRelationManagerAnalyzer::class,
     ];
 
     /**

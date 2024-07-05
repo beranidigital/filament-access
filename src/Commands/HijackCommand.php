@@ -13,7 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class HijackCommand extends BaseCommand
 {
-    public $signature = 'filament-access:hijack {pathToClass}';
+    public $signature = 'filament-access:hijack';
 
     public $description = 'Hijack a class to have custom permissions';
 
@@ -23,12 +23,7 @@ class HijackCommand extends BaseCommand
         if ($res) {
             return $res;
         }
-        $pathToClass = $this->argument('pathToClass');
-        if (! file_exists($pathToClass)) {
-            $this->error('File not found');
 
-            return self::FAILURE;
-        }
         $results = BaseAnalyzer::analyzeAll();
         $tasks = [];
         foreach ($results as $result) {

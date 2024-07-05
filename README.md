@@ -43,6 +43,11 @@ php artisan vendor:publish --tag="filament-access-config"
 ```php
 \BeraniDigitalID\FilamentAccess\Facades\FilamentAccess::analyzeAll();
 ```
+or
+```bash
+php artisan filament-access:generate
+php artisan filament-access:hijack
+```
 
 ## How it works
 1. It hooks into a class to correct the permission

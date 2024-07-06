@@ -30,7 +30,6 @@ class FilamentAccess
         $arguments = is_array($arguments) ? implode('_', $arguments) : $arguments;
         $arguments = str_replace('\\', '_', $arguments);
 
-
         return ($arguments . '') . '_' . $ability;
     }
     /**

@@ -27,8 +27,11 @@ class FilamentAccess
         if ($this->namingCallback) {
             return ($this->namingCallback)($ability, $arguments);
         }
+        $arguments = is_array($arguments) ? implode('_', $arguments) : $arguments;
+        $arguments = str_replace('\\', '_', $arguments);
 
-        return ($arguments . '') . '.' . $ability;
+
+        return ($arguments . '') . '_' . $ability;
     }
     /**
      * @method static \BeraniDigitalID\FilamentAccess\FilamentAccess analyzeAll(): array
